@@ -1,0 +1,6 @@
+services:
+  app:
+    build: .
+    container_name: ml-env
+    ports:
+      - "80:8080"
