@@ -8,15 +8,24 @@ device = (
     else torch.device('cpu')
 )
 
-model = nn.Linear(10, 2).to(device)
+model = nn.Sequential(
+    nn.Linear(200, 140),
+    nn.ReLU(),  
+    nn.Linear(140, 100),
+    nn.ReLU(),  
+    nn.Linear(100, 20),
+    nn.ReLU(),  
+    nn.Linear(20, 10),
+    nn.ReLU(),  
+    nn.Linear(10, 2)).to(device)
 
 optimizer = optim.Adam(model.parameters(), lr=0.001)
 
 loss_func = nn.CrossEntropyLoss()
 
 
-x = torch.randn(100, 10).to(device)
-y = torch.randint(0, 2, (100,)).to(device)
+x = torch.arange(0, 100000).reshape((500, 200)).float().to(device)
+y = torch.arange(1, 501).reshape((500,)).float().to(device)
 
 for epoch in range(10):
     optimizer.zero_grad()
@@ -26,5 +35,4 @@ for epoch in range(10):
     optimizer.step()
     print(f'Epoch {epoch+1}, Loss: {loss.item()}')
 
-
-torch.save(model.state_dict(), 'model.pth')
+print(model(torch.arange(0, 200).reshape((200,)).float().to(device)))

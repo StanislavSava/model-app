@@ -1,6 +1,19 @@
 services:
+
+  model:
+  image: ghcr.io/huggingface/text-generation-inference:latest
+  container_name: text-gen-model
+  ports:
+    - "8080:80"
+  volumes:
+    - ~/.cache/huggingface:/data
+  command: --model-id HuggingFaceTB/SmolLM2-360M-Instruct
   app:
     build: .
-    container_name: ml-env
+    container_name: ml-chat
     ports:
-      - "80:8080"
+      - "80:80"
+    depends_on:
+      - model
+    environment:
+      MODEL_URL: "http://model:80"
