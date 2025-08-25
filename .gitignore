@@ -5,3 +5,6 @@ __pychache__
 *.pyd
 *.pkl
 *.db
+frontend/node_modules
+frontend/build
+.DS_Store
