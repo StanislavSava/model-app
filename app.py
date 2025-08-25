@@ -1,8 +1,19 @@
 import os
 from huggingface_hub import InferenceClient
+from fastapi.middleware.cors import CORSMiddleware
 from fastapi import FastAPI
 
 app = FastAPI()
+
+origins = ["*"]  # in prod, set this to your frontend domain
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
 
 model_url = os.environ.get("MODEL_URL", "http://model:80")
 
