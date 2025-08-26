@@ -1,24 +1,38 @@
 services:
-  model:
-    image: ghcr.io/huggingface/text-generation-inference:latest
-    container_name: text-gen-model
+  llama-model:
+    container_name: llama-model
+    build:
+      context: .
+      dockerfile: Dockerfile.llama
     ports:
-      - "8080:80"
-    volumes:
-      - ~/.cache/huggingface:/data
-    command: --model-id HuggingFaceTB/SmolLM2-360M-Instruct
+      - "8080:8080"
+    environment:
+      LLAMA_CURL: "1"
+    command: ./llama.cpp/build/bin/llama-server --hf-repo unsloth/gpt-oss-20b-GGUF --hf-file gpt-oss-20b-Q5_K_S.gguf -c 2048 --host 0.0.0.0 --port 8080
   app:
-    build: .
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile.app
     container_name: ml-chat
+    volumes:
+      - ./backend:/app    
     ports:
       - "80:80"
     depends_on:
-      - model
+      - llama-model
     environment:
-      MODEL_URL: "http://model:80"
+      MODEL_URL: "http://llama-model:8080"
+    expose:
+      - "80"
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.frontend
+    volumes:
+      - ./frontend:/app
     container_name: "chat-ui"
+    expose:
+      - 3000
     ports:
       - "3000:3000"
     depends_on:

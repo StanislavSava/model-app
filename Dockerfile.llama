@@ -1,0 +1,20 @@
+FROM python:3.10-slim
+
+# Set working directory
+WORKDIR /llama_app
+
+
+# Install build dependencies for llama.cpp
+RUN apt-get update && \
+    apt-get install -y build-essential cmake git curl libcurl4-openssl-dev && \
+    rm -rf /var/lib/apt/lists/*
+
+# Clone and build llama.cpp
+RUN git clone https://github.com/ggerganov/llama.cpp.git /llama_app/llama.cpp && \
+    cd /llama_app/llama.cpp && \
+    cmake -B build && cmake --build build
+
+
+
+# Environment variable to allow llama-server to download from Hugging Face
+ENV LLAMA_CURL=1

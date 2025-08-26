@@ -16,12 +16,13 @@ export default function App() {
     setLoading(true);
 
     try {
-      const res = await fetch("http://model:80/chat", {
+      const res = await fetch("http://localhost:80/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ prompt }),
       });
       const data = await res.json();
+      console.log(data)
       setMessages([...messages, { user: prompt, bot: data.response }]);
       setPrompt("");
     } catch (err) {
@@ -30,6 +31,8 @@ export default function App() {
       setLoading(false);
     }
   };
+
+  console.log(messages)
 
   return (
     <div className="flex-auto h-screen bg-gray-100 flex items-center justify-center p-4">
